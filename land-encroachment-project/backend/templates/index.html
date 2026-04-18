@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Land Encroachment Detection System</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f5f7fb;
+        }
+
+        h2 {
+            text-align: center;
+            padding: 12px;
+            background: #111;
+            color: white;
+            margin: 0;
+        }
+
+        #map {
+            height: 480px;
+            width: 100%;
+        }
+
+        .dashboard {
+            padding: 15px;
+        }
+
+        .info-box {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .card {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            width: 180px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        img {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 8px;
+            border: 2px solid #333;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            background: #222;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* LOADER */
+        #loader {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: #000;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            z-index: 999;
+        }
+
+        /* ERROR */
+        #errorBox {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* IMAGE SECTION */
+        .image-section {
+            margin-top: 15px;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+
+            #map {
+                height: 300px;
+            }
+
+            .info-box {
+                flex-direction: column;
+            }
+
+            .card {
+                width: 100%;
+            }
+
+            img {
+                max-width: 100%;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🚨 Land Encroachment Detection System</h2>
+
+<div id="loader">🔄 AI Processing...</div>
+
+<div id="map"></div>
+
+<div class="dashboard">
+
+    <!-- STATUS -->
+    <div class="status-bar">
+        <b>System Status:</b> LIVE MONITORING ACTIVE
+    </div>
+
+    <!-- STATS -->
+    <div class="info-box">
+
+        <div class="card">
+            <b>Change</b>
+            <p id="percentage">--</p>
+        </div>
+
+        <div class="card">
+            <b>Risk</b>
+            <p id="risk">--</p>
+        </div>
+
+        <div class="card">
+            <b>Total Plots</b>
+            <p id="totalPlots">0</p>
+        </div>
+
+        <div class="card">
+            <b>High Risk</b>
+            <p id="highRisk">0</p>
+        </div>
+
+        <div class="card">
+            <b>Confidence</b>
+            <p id="confidence">--</p>
+        </div>
+
+    </div>
+
+    <!-- AI ENGINE -->
+    <div class="card" style="width:100%; margin-top:10px;">
+        <b>🧠 AI Engine</b>
+        <p id="aiType">--</p>
+    </div>
+
+    <p id="errorBox"></p>
+
+    <!-- IMAGES -->
+    <div class="image-section">
+        <h4>Before Image</h4>
+        <img id="beforeImage"/>
+
+        <h4>After Image</h4>
+        <img id="afterImage"/>
+
+        <h4>Detected Changes</h4>
+        <img id="outputImage"/>
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+// ---------------- MAP INIT ---------------- //
+const map = L.map('map').setView([13.0827, 80.2707], 12);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'OSM'
+}).addTo(map);
+
+let markers = [];
+
+// ---------------- LOAD PLOTS ---------------- //
+async function loadPlots() {
+    try {
+        const res = await fetch("/api/v1/plots");
+        const data = await res.json();
+
+        document.getElementById("totalPlots").innerText = data.total;
+        document.getElementById("highRisk").innerText = data.high;
+
+        // remove old markers
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        data.plots.forEach(plot => {
+
+            let color = "green";
+            if (plot.status === "High") color = "red";
+            else if (plot.status === "Medium" || plot.status === "Suspicious") color = "orange";
+
+            const marker = L.circleMarker([plot.lat, plot.lng], {
+                radius: 8,
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.9
+            }).addTo(map);
+
+            marker.bindPopup(`
+                <b>Plot ID:</b> ${plot.id}<br>
+                <b>Status:</b> ${plot.status}
+            `);
+
+            marker.on("click", async () => {
+
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("errorBox").innerText = "";
+
+                document.getElementById("risk").innerText = "Processing...";
+                document.getElementById("aiType").innerText = "Running AI...";
+
+                try {
+                    const res = await fetch(`/api/v1/analyze/${plot.id}`);
+                    const result = await res.json();
+
+                    document.getElementById("loader").style.display = "none";
+
+                    if (result.error) {
+                        document.getElementById("errorBox").innerText = result.error;
+                        return;
+                    }
+
+                    document.getElementById("percentage").innerText = result.percentage + "%";
+                    document.getElementById("risk").innerText = result.risk;
+
+                    document.getElementById("confidence").innerText =
+                        result.confidence ? result.confidence + "%" : "N/A";
+
+                    document.getElementById("aiType").innerText =
+                        result.ai_engine.type;
+
+                    document.getElementById("beforeImage").src =
+                        `/static/data/${result.before_image}`;
+
+                    document.getElementById("afterImage").src =
+                        `/static/data/${result.after_image}`;
+
+                    document.getElementById("outputImage").src =
+                        `/static/data/${result.output_image}`;
+
+                    // update marker color
+                    let newColor = "green";
+                    if (result.risk === "High") newColor = "red";
+                    else if (result.risk === "Medium" || result.risk === "Suspicious") newColor = "orange";
+
+                    marker.setStyle({ color: newColor, fillColor: newColor });
+
+                } catch (err) {
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("errorBox").innerText = "Server Error!";
+                }
+            });
+
+            markers.push(marker);
+        });
+
+    } catch (err) {
+        document.getElementById("errorBox").innerText = "Failed to load plots!";
+    }
+}
+
+// ---------------- AUTO REFRESH ---------------- //
+loadPlots();
+setInterval(loadPlots, 8000);
+
+</script>
+
+</body>
+</html>

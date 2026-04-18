@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    text-align: center;
+    background: #f4f4f4;
+}
+
+h1 {
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+}
+
+#map {
+    height: 400px;
+}
+
+#result {
+    background: white;
+    padding: 20px;
+}
+
+img {
+    width: 300px;
+    margin-top: 10px;
+    border: 2px solid black;
+}
+#riskChart {
+    flex: none;       /* stop flex from resizing it */
+    height: 250px;    /* visible height */
+    width: 100%;      /* full width of sidebar */
+    margin-top: 10px;
+}
+#sidebar {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}

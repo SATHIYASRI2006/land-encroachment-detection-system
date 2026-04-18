@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: land-encroachment-backend
+    runtime: python
+    rootDir: land-encroachment-project/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --worker-class eventlet -w 1 app:app
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOW_LEGACY_ANONYMOUS
+        value: "true"
+      - key: AUTO_MONITOR_INTERVAL_MINUTES
+        value: "10"
+      - key: ALERT_EMAIL_COOLDOWN_MINUTES
+        value: "120"
+      - key: REALTIME_INGEST_ENABLED
+        value: "true"
+      - key: REALTIME_INGEST_INTERVAL_SECONDS
+        value: "30"
+
+  - type: web
+    name: land-encroachment-frontend
+    runtime: static
+    rootDir: land-encroachment-project/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: REACT_APP_API_BASE_URL
+        value: https://your-backend-service.onrender.com
+      - key: REACT_APP_SOCKET_URL
+        value: https://your-backend-service.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -1,0 +1,158 @@
+{
+  "government_land_layer": [
+    {
+      "layer_id": "gov-001",
+      "layer_name": "Cooum River Margin Reserve",
+      "land_type": "government",
+      "survey_number": "GLR-1001",
+      "geometry_geojson": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.2660, 13.0808],
+            [80.2706, 13.0808],
+            [80.2706, 13.0846],
+            [80.2660, 13.0846],
+            [80.2660, 13.0808]
+          ]
+        ]
+      }
+    },
+    {
+      "layer_id": "gov-002",
+      "layer_name": "Public Road Widening Corridor",
+      "land_type": "road",
+      "survey_number": "GLR-2002",
+      "geometry_geojson": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.2264, 13.0642],
+            [80.2318, 13.0642],
+            [80.2318, 13.0660],
+            [80.2264, 13.0660],
+            [80.2264, 13.0642]
+          ]
+        ]
+      }
+    },
+    {
+      "layer_id": "gov-003",
+      "layer_name": "Storm Water Channel Protection",
+      "land_type": "government",
+      "survey_number": "GLR-3004",
+      "geometry_geojson": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.2444, 13.0468],
+            [80.2484, 13.0468],
+            [80.2484, 13.0498],
+            [80.2444, 13.0498],
+            [80.2444, 13.0468]
+          ]
+        ]
+      }
+    }
+  ],
+  "official_parcels": [
+    {
+      "parcel_id": "parcel-001",
+      "survey_number": "TN-07-128/3A",
+      "owner_name": "Ramanathan",
+      "area": 1200.0,
+      "source": "seed",
+      "geometry_geojson": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.2620, 13.0812],
+            [80.2652, 13.0812],
+            [80.2652, 13.0838],
+            [80.2620, 13.0838],
+            [80.2620, 13.0812]
+          ]
+        ]
+      }
+    },
+    {
+      "parcel_id": "parcel-002",
+      "survey_number": "TN-07-219/1B",
+      "owner_name": "Meenakshi",
+      "area": 950.0,
+      "source": "seed",
+      "geometry_geojson": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.2230, 13.0634],
+            [80.2260, 13.0634],
+            [80.2260, 13.0664],
+            [80.2230, 13.0664],
+            [80.2230, 13.0634]
+          ]
+        ]
+      }
+    },
+    {
+      "parcel_id": "parcel-003",
+      "survey_number": "TN-07-401/2C",
+      "owner_name": "Jaya Kumar",
+      "area": 780.0,
+      "source": "seed",
+      "geometry_geojson": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.2412, 13.0458],
+            [80.2440, 13.0458],
+            [80.2440, 13.0486],
+            [80.2412, 13.0486],
+            [80.2412, 13.0458]
+          ]
+        ]
+      }
+    }
+  ],
+  "sample_registration_requests": [
+    {
+      "seller_name": "Ramanathan",
+      "buyer_name": "Naveen",
+      "uploaded_sale_deed": "demo_match_sale_deed.txt",
+      "extracted_survey_number": "TN-07-128/3A",
+      "extracted_area": 1200.0,
+      "extracted_boundary_coordinates": [
+        [13.0812, 80.2620],
+        [13.0812, 80.2652],
+        [13.0838, 80.2652],
+        [13.0838, 80.2620]
+      ]
+    },
+    {
+      "seller_name": "Meenakshi",
+      "buyer_name": "Ashwin",
+      "uploaded_sale_deed": "demo_expansion_sale_deed.txt",
+      "extracted_survey_number": "TN-07-219/1B",
+      "extracted_area": 1330.0,
+      "extracted_boundary_coordinates": [
+        [13.0630, 80.2218],
+        [13.0630, 80.2262],
+        [13.0668, 80.2262],
+        [13.0668, 80.2218]
+      ]
+    },
+    {
+      "seller_name": "Jaya Kumar",
+      "buyer_name": "Arun",
+      "uploaded_sale_deed": "demo_government_overlap_sale_deed.txt",
+      "extracted_survey_number": "TN-07-401/2C",
+      "extracted_area": 1040.0,
+      "extracted_boundary_coordinates": [
+        [13.0458, 80.2412],
+        [13.0458, 80.2464],
+        [13.0490, 80.2464],
+        [13.0490, 80.2412]
+      ]
+    }
+  ]
+}

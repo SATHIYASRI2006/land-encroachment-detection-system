@@ -1,0 +1,30 @@
+{
+  "plot_id": "plot9",
+  "lat": 13.1016,
+  "lng": 80.2324,
+  "location_name": "Madhavaram Canal Edge",
+  "area": "Madhavaram",
+  "survey_no": "S.No 14/2B",
+  "owner_name": "Revenue Department",
+  "village": "Madhavaram",
+  "district": "Chennai",
+  "operator_note": "Realtime feed from external satellite pipeline",
+  "boundary_geojson": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [80.2304, 13.0996],
+        [80.2344, 13.0996],
+        [80.2344, 13.1036],
+        [80.2304, 13.1036],
+        [80.2304, 13.0996]
+      ]
+    ]
+  },
+  "images": [
+    { "year": 2021, "source_path": "plot9_2021.png" },
+    { "year": 2022, "source_path": "plot9_2022.png" },
+    { "year": 2023, "source_path": "plot9_2023.png" },
+    { "year": 2024, "source_path": "plot9_2024.png" }
+  ]
+}
