@@ -1,0 +1,15 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+*.db
+
+# Reports
+reports/
+
+# Node modules
+node_modules/
+
+# Environment files
+.env

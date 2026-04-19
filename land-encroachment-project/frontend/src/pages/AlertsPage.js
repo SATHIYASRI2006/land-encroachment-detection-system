@@ -20,19 +20,6 @@ export default function AlertsPage({ alerts, auth, plots, loading }) {
           <h1 className="page-title">
             {getLocalizedText(auth.language, "Alert monitoring desk", "எச்சரிக்கை கண்காணிப்பு மையம்")}
           </h1>
-          <p className="body-copy">
-            {auth.role === "viewer"
-              ? getLocalizedText(
-                  auth.language,
-                  "Citizens see verified public-safe updates only.",
-                  "பொது மக்களுக்கு பாதுகாப்பான மற்றும் சரிபார்க்கப்பட்ட தகவல்கள் மட்டும் காட்டப்படும்."
-                )
-              : getLocalizedText(
-                  auth.language,
-                  "Officials and admins can review incident severity, timing, and operational status.",
-                  "அதிகாரிகள் மற்றும் நிர்வாகிகள் சம்பவ தீவிரம், நேரம், மற்றும் செயல்நிலையை பார்க்கலாம்."
-                )}
-          </p>
         </div>
       </section>
 

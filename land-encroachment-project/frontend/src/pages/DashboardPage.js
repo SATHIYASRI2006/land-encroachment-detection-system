@@ -3,7 +3,6 @@ import Card from "../components/Card";
 import {
   ROLE_CONFIG,
   getLocalizedText,
-  getRoleDescription,
   getRoleInsights,
 } from "../config/appContent";
 import { COLORS } from "../theme/colors";
@@ -33,7 +32,6 @@ export default function DashboardPage({ alerts, auth, loadError, loading, plots 
             {getLocalizedText(auth.language, "Overview", "Overview")}
           </p>
           <h1 className="page-title">Chennai land risk dashboard</h1>
-          <p className="body-copy">{getRoleDescription(auth.role)}</p>
           {loadError ? <p className="status-error">{loadError}</p> : null}
         </div>
 
@@ -88,15 +86,6 @@ export default function DashboardPage({ alerts, auth, loadError, loading, plots 
               <div className="response-intelligence-card" key={item.label}>
                 <Badge tone={item.tone}>{item.value}</Badge>
                 <strong>{item.label}</strong>
-                <span className="muted-text">
-                  {item.tone === "high"
-                    ? "Immediate attention lane"
-                    : item.tone === "medium"
-                      ? "Operational watch queue"
-                      : item.tone === "info"
-                        ? "System performance signal"
-                        : "Healthy monitoring indicator"}
-                </span>
               </div>
             ))}
           </div>

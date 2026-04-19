@@ -44,16 +44,21 @@ def generate_registration_report(
 
     draw_line("Request reference", request_reference)
     draw_line("Generated at", f"{datetime.utcnow().isoformat()}Z")
-    draw_line("Source mode", "Officer structured entry")
+    draw_line(
+        "Source mode",
+        "Document upload + officer review"
+        if payload.get("uploaded_sale_deed")
+        else "Officer structured entry",
+    )
     y -= 6
 
     pdf.setFont("Helvetica-Bold", 13)
     pdf.drawString(50, y, "Applicant Details")
     y -= 22
-    draw_line("Seller name", payload.get("seller_name") or "--")
-    draw_line("Buyer name", payload.get("buyer_name") or "--")
-    draw_line("Village", payload.get("village") or "--")
-    draw_line("District", payload.get("district") or "--")
+    draw_line("Seller name", payload.get("seller_name") or extracted.get("seller_name") or "--")
+    draw_line("Buyer name", payload.get("buyer_name") or extracted.get("buyer_name") or "--")
+    draw_line("Village", payload.get("village") or extracted.get("village") or "--")
+    draw_line("District", payload.get("district") or extracted.get("district") or "--")
     draw_line("Officer notes", payload.get("officer_notes") or "--")
     y -= 6
 
@@ -63,6 +68,15 @@ def generate_registration_report(
     draw_line("Survey number", extracted.get("survey_number") or "--")
     draw_line("Area", extracted.get("area") or "--")
     draw_line("Coordinate pairs", len(extracted.get("coordinates") or []))
+    draw_line(
+        "Auto extraction confidence",
+        ", ".join(
+            f"{key}:{value}"
+            for key, value in (extracted.get("field_confidence") or {}).items()
+            if key in {"seller_name", "buyer_name", "survey_number", "boundary_coordinates"}
+        )
+        or "--",
+    )
     y -= 6
 
     pdf.setFont("Helvetica-Bold", 13)

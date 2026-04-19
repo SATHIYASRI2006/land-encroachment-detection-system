@@ -26,6 +26,8 @@ from services.ownership_service import (
 from services.plot_service import save_uploaded_image, serialize_plot, upsert_plot_bundle
 from services.realtime_ingest_service import get_realtime_status, start_realtime_ingestion
 from services.registration_validation_service import (
+    extract_registration_preview,
+    get_official_parcel_by_survey,
     list_registration_requests,
     list_sample_registration_requests,
     verify_registration_request,
@@ -416,7 +418,9 @@ def verify_registration():
             return error_response("boundary_coordinates must be valid JSON")
 
     required = {"seller_name", "buyer_name", "survey_number", "boundary_coordinates"}
-    missing = [field for field in required if not payload.get(field)]
+    missing = [field for field in required if not payload.get(field) and field != "boundary_coordinates"]
+    if not payload.get("boundary_coordinates") and file_storage is None:
+        missing.append("boundary_coordinates")
     if missing:
         return error_response("Missing required fields", details={"fields": missing})
 
@@ -428,6 +432,32 @@ def verify_registration():
         logger.exception("Registration verification failed: %s", exc)
         return error_response("Failed to verify registration", 500)
     return success_response(result, 201)
+
+
+@app.route("/api/v1/verify-registration/extract", methods=["POST"])
+@require_auth(settings, roles={"admin", "officer"})
+def extract_registration():
+    file_storage = request.files.get("uploaded_sale_deed")
+    if file_storage is None or not (file_storage.filename or "").strip():
+        return error_response("Upload a deed file to extract registration details", 400)
+
+    try:
+        result = extract_registration_preview(file_storage)
+    except ValueError as exc:
+        return error_response(str(exc), 400)
+    except Exception as exc:
+        logger.exception("Registration extraction failed: %s", exc)
+        return error_response("Failed to extract registration details", 500)
+    return success_response(result)
+
+
+@app.route("/api/v1/official-parcels/<path:survey_number>", methods=["GET"])
+@require_auth(settings, roles={"admin", "officer"})
+def official_parcel_lookup(survey_number):
+    record = get_official_parcel_by_survey(settings, survey_number)
+    if not record:
+        return error_response("Official parcel not found", 404)
+    return success_response(record)
 
 
 @app.route("/api/v1/verify-registration/sample-requests", methods=["GET"])

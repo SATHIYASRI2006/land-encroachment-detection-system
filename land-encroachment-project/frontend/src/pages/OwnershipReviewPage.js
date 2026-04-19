@@ -176,10 +176,6 @@ export default function OwnershipReviewPage({ auth, plots }) {
             {getLocalizedText(auth.language, "Ownership Review", "Ownership Review")}
           </p>
           <h1 className="page-title">Boundary and title conflict review</h1>
-          <p className="body-copy">
-            This review engine compares submitted claim geometry against monitored parcels,
-            official survey parcels, and protected government land layers before a case is accepted.
-          </p>
         </div>
       </section>
 

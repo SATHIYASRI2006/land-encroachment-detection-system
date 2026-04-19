@@ -82,9 +82,6 @@ export default function AnalyticsPage({ auth, plots, alerts, loading }) {
             {getLocalizedText(auth.language, "Analytics", "Analytics")}
           </p>
           <h1 className="page-title">Analytics and trends</h1>
-          <p className="body-copy">
-            Live analytics are now generated from the actual plot and alert data instead of static placeholders.
-          </p>
         </div>
       </section>
 

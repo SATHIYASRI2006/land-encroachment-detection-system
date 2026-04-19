@@ -100,9 +100,6 @@ export default function AdminPage({ auth, plots, alerts, onUploadSuccess }) {
             {getLocalizedText(auth.language, "Admin Panel", "Admin Panel")}
           </p>
           <h1 className="page-title">Governance and control room workspace</h1>
-          <p className="body-copy">
-            Upload parcel data, manage operational evidence, and maintain audit-ready monitoring records.
-          </p>
         </div>
         <div className="hero-summary">
           <span>Compliance</span>

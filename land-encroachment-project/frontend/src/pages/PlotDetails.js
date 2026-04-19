@@ -90,19 +90,6 @@ export default function PlotDetails({ auth, plots, loading }) {
           <h1 className="page-title">
             {getLocalizedText(auth.language, "Full plot register", "முழு நிலப் பதிவு")}
           </h1>
-          <p className="body-copy">
-            {auth.role === "viewer"
-              ? getLocalizedText(
-                  auth.language,
-                  "Citizens can open the map and review simplified place-level information.",
-                  "பொது மக்கள் வரைபடத்தை திறந்து எளிய இட விவரங்களைப் பார்க்கலாம்."
-                )
-              : getLocalizedText(
-                  auth.language,
-                  "Officials and admins can jump to the live map and review operational parcel details.",
-                  "அதிகாரிகள் மற்றும் நிர்வாகிகள் நேரடி வரைபடத்தில் சென்று செயல்பாட்டு விவரங்களை ஆய்வு செய்யலாம்."
-                )}
-          </p>
           {message ? <p className="muted-text">{message}</p> : null}
         </div>
       </section>

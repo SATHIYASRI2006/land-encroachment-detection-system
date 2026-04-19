@@ -35,10 +35,6 @@ export default function MapPage({
             {getLocalizedText(auth.language, "Live Map", "Live Map")}
           </p>
           <h1 className="page-title">Map-based encroachment review</h1>
-          <p className="body-copy">
-            The live parcel map is the primary investigation surface. Select a parcel to inspect its risk profile,
-            operational details, and before / after imagery below.
-          </p>
           {loadError ? <p className="status-error">{loadError}</p> : null}
         </div>
 

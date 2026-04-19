@@ -7,9 +7,33 @@ export const SOCKET_URL =
   process.env.REACT_APP_SOCKET_URL || BASE_URL;
 
 let authToken = "";
+let authFailureHandler = null;
+
+function getStoredAuthToken() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  try {
+    const rawSession = window.localStorage.getItem("lem-session");
+    if (!rawSession) {
+      return "";
+    }
+
+    const parsedSession = JSON.parse(rawSession);
+    return parsedSession?.token || "";
+  } catch (error) {
+    console.error("Failed to restore auth token from storage", error);
+    return "";
+  }
+}
 
 export function setAuthToken(token) {
   authToken = token || "";
+}
+
+export function setAuthFailureHandler(handler) {
+  authFailureHandler = typeof handler === "function" ? handler : null;
 }
 
 const client = axios.create({
@@ -19,11 +43,30 @@ const client = axios.create({
 client.interceptors.request.use((config) => {
   const nextConfig = { ...config };
   nextConfig.headers = { ...(config.headers || {}) };
-  if (authToken) {
-    nextConfig.headers.Authorization = `Bearer ${authToken}`;
+  const activeToken = authToken || getStoredAuthToken();
+  if (activeToken) {
+    nextConfig.headers.Authorization = `Bearer ${activeToken}`;
   }
   return nextConfig;
 });
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const message = error?.response?.data?.error?.message || "";
+    if (status === 401) {
+      authToken = "";
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("lem-session");
+      }
+      if (authFailureHandler) {
+        authFailureHandler(message || "Your session expired. Please sign in again.");
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const loginUser = async (payload) => {
   const res = await client.post("/api/v1/login", payload);
@@ -70,8 +113,51 @@ export const getRegistrationRecords = async () => {
   return res.data;
 };
 
+export const getOfficialParcelBySurvey = async (surveyNumber) => {
+  const res = await client.get(`/api/v1/official-parcels/${encodeURIComponent(surveyNumber)}`);
+  return res.data;
+};
+
+export const extractRegistrationFromDeed = async (file) => {
+  const formData = new FormData();
+  formData.append("uploaded_sale_deed", file);
+  const res = await client.post("/api/v1/verify-registration/extract", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+};
+
 export const verifyRegistration = async (payload) => {
-  const res = await client.post("/api/v1/verify-registration", payload);
+  const hasFile = Boolean(payload?.uploaded_sale_deed);
+  let requestBody = payload;
+  let config = undefined;
+
+  if (hasFile) {
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (key === "uploaded_sale_deed") {
+        if (value) {
+          formData.append(key, value);
+        }
+        return;
+      }
+      if (key === "boundary_coordinates") {
+        formData.append(key, JSON.stringify(value || []));
+        return;
+      }
+      formData.append(key, value ?? "");
+    });
+    requestBody = formData;
+    config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+  }
+
+  const res = await client.post("/api/v1/verify-registration", requestBody, config);
   return res.data;
 };
 

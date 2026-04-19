@@ -11,6 +11,7 @@ import {
   getPlots,
   loginUser,
   registerUser,
+  setAuthFailureHandler,
   setAuthToken,
 } from "./services/api";
 import {
@@ -213,6 +214,24 @@ function App() {
     document.documentElement.setAttribute("data-theme", auth.theme);
     setAuthToken(auth.token);
   }, [auth]);
+
+  useEffect(() => {
+    setAuthFailureHandler((message) => {
+      setAuth((current) => ({
+        ...current,
+        isAuthenticated: false,
+        role: "viewer",
+        name: DEFAULT_AUTH.name,
+        username: "",
+        token: "",
+      }));
+      setLoadError(message || "Your session expired. Please sign in again.");
+    });
+
+    return () => {
+      setAuthFailureHandler(null);
+    };
+  }, []);
 
   useEffect(() => {
     if (!auth.isAuthenticated || !auth.token) {
